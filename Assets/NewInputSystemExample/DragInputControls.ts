@@ -1,4 +1,4 @@
-import { Camera, Coroutine, GameObject, Physics, Plane, RaycastHit, Time, Vector2, Vector3, WaitForSeconds } from 'UnityEngine';
+import { Camera, Coroutine, Debug, GameObject, Physics, Plane, RaycastHit, Time, Vector2, Vector3, WaitForSeconds } from 'UnityEngine';
 import { PlayerInput } from 'UnityEngine.InputSystem'
 import { CallbackContext } from 'UnityEngine.InputSystem.InputAction';
 import { ZepetoScriptBehaviour } from 'ZEPETO.Script'
@@ -17,16 +17,20 @@ export default class DragInputControls extends ZepetoScriptBehaviour {
 
     StartTouch(context:CallbackContext) {
         let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
-        this._continueTouch = this.StartCoroutine(this.ContinueTouch(context));
+        //Debug.Log("Start: " + position.x + "/" + position.y);
+
         this.TryFindObjectToPickup(position);
+
+        this._continueTouch = this.StartCoroutine(this.ContinueTouch(context));
     }
 
     *ContinueTouch(context:CallbackContext) {
         while(true) {
-            let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
+            //let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
+            //Debug.Log("Continue: " + position.x + "/" + position.y);
 
             if (this.PickupMesh) {
-                this.MovePickupObject(position);
+                this.MovePickupObject();
             }
 
             yield new WaitForSeconds(Time.deltaTime);
@@ -34,8 +38,11 @@ export default class DragInputControls extends ZepetoScriptBehaviour {
     }
 
     EndTouch(context:CallbackContext) {
-        let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
+        //let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
+        //Debug.Log("End: " + position.x + "/" + position.y);
+
         this.StopCoroutine(this._continueTouch);
+
         this.PickupMesh = null;
     }
 
@@ -49,20 +56,17 @@ export default class DragInputControls extends ZepetoScriptBehaviour {
         }
     }
 
-    MovePickupObject(screenPosition:Vector2) {
-        const worldPoint:Vector3 = this.Camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0));
-        this.PickupMesh.transform.position = this.GetNewPosition();
-    }
-
-
-    GetNewPosition() {
+    MovePickupObject() {
+        let positionToMoveTo:Vector3;
         let plane:Plane = new Plane(this.Camera.transform.forward, this.PickupMesh.transform.position);
         let screenPosition:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
         let ray = this.Camera.ScreenPointToRay(new Vector3(screenPosition.x, screenPosition.y, 0));
         let ref = $ref<number>();
         if (plane.Raycast(ray, ref)) {
             let hitInfo = $unref(ref);
-            return ray.GetPoint(hitInfo);
+            positionToMoveTo = ray.GetPoint(hitInfo);
         }
+
+        this.PickupMesh.transform.position = positionToMoveTo;
     }
 }
