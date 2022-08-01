@@ -1,0 +1,47 @@
+fileFormatVersion: 2
+guid: 8c54e661e63d1414798cdb929e27f463
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nconst UnityEngine_1 = require(\"UnityEngine\");\r\nconst
+    ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nclass DragInputControls extends
+    ZEPETO_Script_1.ZepetoScriptBehaviour {\r\n    Start() {\r\n        this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryContact\").add_started(this.StartTouch.bind(this));\r\n       
+    this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryContact\").add_canceled(this.EndTouch.bind(this));\r\n   
+    }\r\n    StartTouch(context) {\r\n        let position = this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryPosition\").ReadValueAsObject();\r\n       
+    this._continueTouch = this.StartCoroutine(this.ContinueTouch(context));\r\n       
+    this.TryFindObjectToPickup(position);\r\n    }\r\n    *ContinueTouch(context)
+    {\r\n        while (true) {\r\n            let position = this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryPosition\").ReadValueAsObject();\r\n           
+    if (this.PickupMesh) {\r\n                this.MovePickupObject(position);\r\n           
+    }\r\n            yield new UnityEngine_1.WaitForSeconds(UnityEngine_1.Time.deltaTime);\r\n       
+    }\r\n    }\r\n    EndTouch(context) {\r\n        let position = this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryPosition\").ReadValueAsObject();\r\n       
+    this.StopCoroutine(this._continueTouch);\r\n        this.PickupMesh = null;\r\n   
+    }\r\n    TryFindObjectToPickup(screenPosition) {\r\n        let ray = this.Camera.ScreenPointToRay(new
+    UnityEngine_1.Vector3(screenPosition.x, screenPosition.y, 0));\r\n        let
+    ref = $ref();\r\n        if (UnityEngine_1.Physics.Raycast(ray, ref, 1000)) {\r\n           
+    let hitInfo = $unref(ref);\r\n            this.PickupMesh = hitInfo.collider.gameObject;\r\n       
+    }\r\n    }\r\n    MovePickupObject(screenPosition) {\r\n        const worldPoint
+    = this.Camera.ScreenToWorldPoint(new UnityEngine_1.Vector3(screenPosition.x,
+    screenPosition.y, 0));\r\n        this.PickupMesh.transform.position = this.GetNewPosition();\r\n   
+    }\r\n    GetNewPosition() {\r\n        let plane = new UnityEngine_1.Plane(this.Camera.transform.forward,
+    this.PickupMesh.transform.position);\r\n        let screenPosition = this.DragInputControls.actions.FindActionMap(\"Touch\").FindAction(\"PrimaryPosition\").ReadValueAsObject();\r\n       
+    let ray = this.Camera.ScreenPointToRay(new UnityEngine_1.Vector3(screenPosition.x,
+    screenPosition.y, 0));\r\n        let ref = $ref();\r\n        if (plane.Raycast(ray,
+    ref)) {\r\n            let hitInfo = $unref(ref);\r\n            return ray.GetPoint(hitInfo);\r\n       
+    }\r\n    }\r\n}\r\nexports.default = DragInputControls;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiRHJhZ0lucHV0Q29udHJvbHMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJEcmFnSW5wdXRDb250cm9scy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLDZDQUFnSTtBQUdoSSxpREFBcUQ7QUFFckQsTUFBcUIsaUJBQWtCLFNBQVEscUNBQXFCO0lBT3pELEtBQUs7UUFDUixJQUFJLENBQUMsaUJBQWlCLENBQUMsT0FBTyxDQUFDLGFBQWEsQ0FBQyxPQUFPLENBQUMsQ0FBQyxVQUFVLENBQUMsZ0JBQWdCLENBQUMsYUFBWSxJQUFJLENBQUMsVUFBVSxhQUFDO1FBQzlHLElBQUksQ0FBQyxpQkFBaUIsQ0FBQyxPQUFPLENBQUMsYUFBYSxDQUFDLE9BQU8sQ0FBQyxDQUFDLFVBQVUsQ0FBQyxnQkFBZ0IsQ0FBQyxjQUFhLElBQUksQ0FBQyxRQUFRLGFBQUM7SUFDakgsQ0FBQztJQUVELFVBQVUsQ0FBQyxPQUF1QjtRQUM5QixJQUFJLFFBQVEsR0FBb0IsSUFBSSxDQUFDLGlCQUFpQixDQUFDLE9BQU8sQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLENBQUMsVUFBVSxDQUFDLGlCQUFpQixDQUFDLENBQUMsaUJBQWlCLEVBQUUsQ0FBQztRQUN4SSxJQUFJLENBQUMsY0FBYyxHQUFHLElBQUksQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLGFBQWEsQ0FBQyxPQUFPLENBQUMsQ0FBQyxDQUFDO1FBQ3ZFLElBQUksQ0FBQyxxQkFBcUIsQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUN6QyxDQUFDO0lBRUQsQ0FBQyxhQUFhLENBQUMsT0FBdUI7UUFDbEMsT0FBTSxJQUFJLEVBQUU7WUFDUixJQUFJLFFBQVEsR0FBb0IsSUFBSSxDQUFDLGlCQUFpQixDQUFDLE9BQU8sQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLENBQUMsVUFBVSxDQUFDLGlCQUFpQixDQUFDLENBQUMsaUJBQWlCLEVBQUUsQ0FBQztZQUV4SSxJQUFJLElBQUksQ0FBQyxVQUFVLEVBQUU7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","assetPath":"Assets/NewInputSystemExample/DragInputControls.ts","manifest":{"properties":[{"assembly":"UnityEngine.CoreModule","name":"PickupMesh","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"Camera","type":"UnityEngine.Camera","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.InputSystem","name":"DragInputControls","type":"UnityEngine.InputSystem.PlayerInput","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"DragInputControls","description":""},"isCompiled":true}'
+  typescriptHash: eb7d22be6f0c5a084387a85f312cdc9c
