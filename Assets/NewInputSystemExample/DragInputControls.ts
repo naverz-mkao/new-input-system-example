@@ -1,11 +1,14 @@
-import { Camera, Coroutine, Debug, GameObject, Physics, Plane, RaycastHit, Time, Vector2, Vector3, WaitForSeconds } from 'UnityEngine';
+import { Camera, Coroutine, Debug, GameObject, Object, Physics, Plane, RaycastHit, Time, Vector2, Vector3, WaitForSeconds } from 'UnityEngine';
 import { PlayerInput } from 'UnityEngine.InputSystem'
 import { CallbackContext } from 'UnityEngine.InputSystem.InputAction';
 import { ZepetoScriptBehaviour } from 'ZEPETO.Script'
 
 export default class DragInputControls extends ZepetoScriptBehaviour {
+    public static instance:DragInputControls;
+    
     public PickupMesh:GameObject;
     public Camera:Camera;
+    public myGO:GameObject;
 
     public DragInputControls:PlayerInput;
     private _continueTouch:Coroutine;
@@ -15,9 +18,8 @@ export default class DragInputControls extends ZepetoScriptBehaviour {
         this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryContact").canceled += this.EndTouch;
     }
 
-    StartTouch(context:CallbackContext) {
+    public StartTouch(context:CallbackContext) {
         let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
-        //Debug.Log("Start: " + position.x + "/" + position.y);
 
         this.TryFindObjectToPickup(position);
 
@@ -26,21 +28,14 @@ export default class DragInputControls extends ZepetoScriptBehaviour {
 
     *ContinueTouch(context:CallbackContext) {
         while(true) {
-            //let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
-            //Debug.Log("Continue: " + position.x + "/" + position.y);
-
             if (this.PickupMesh) {
                 this.MovePickupObject();
             }
-
             yield new WaitForSeconds(Time.deltaTime);
         }
     }
 
     EndTouch(context:CallbackContext) {
-        //let position:Vector2 = <Vector2>this.DragInputControls.actions.FindActionMap("Touch").FindAction("PrimaryPosition").ReadValueAsObject();
-        //Debug.Log("End: " + position.x + "/" + position.y);
-
         this.StopCoroutine(this._continueTouch);
 
         this.PickupMesh = null;
